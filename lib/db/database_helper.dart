@@ -75,6 +75,17 @@ class DatabaseHelper {
         conteudo TEXT
       )
     ''');
+    await db.execute('''
+  CREATE TABLE IF NOT EXISTS imc (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    peso REAL,
+    altura REAL,
+    imc REAL,
+    resultado TEXT,
+    data TEXT
+  )
+''');
+
   }
 
   // Função para fechar o banco de dados
