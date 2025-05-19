@@ -19,6 +19,7 @@ class AppSaude extends StatelessWidget {
       routes: {
         '/': (context) => const LoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
+        '/imc': (context) => const ImcScreen(),
       },
     );
   }
