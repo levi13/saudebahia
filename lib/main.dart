@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/imc_historico_screen.dart';
 
 void main() {
   runApp(const AppSaude());
@@ -20,6 +21,7 @@ class AppSaude extends StatelessWidget {
         '/': (context) => const LoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/imc': (context) => const ImcScreen(),
+        '/imc_historico': (context) => const ImcHistoricoScreen(),
       },
     );
   }
