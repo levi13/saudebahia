@@ -51,6 +51,14 @@ class DashboardScreen extends StatelessWidget {
             ),
             _buildDashboardCard(
               context,
+              icon: Icons.history,
+              title: 'Histórico IMC',
+              onTap: () {
+                Navigator.pushNamed(context, '/imc_historico');
+              },
+            ),
+            _buildDashboardCard(
+              context,
               icon: Icons.list_alt,
               title: 'Lista de Refeições',
               onTap: () {
