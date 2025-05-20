@@ -39,7 +39,7 @@ class _ImcScreenState extends State<ImcScreen> {
       });
 
       final db = await DatabaseHelper().database;
-      await db.insert('imc_resultados', {
+      await db.insert('imcs', {
         'altura': altura,
         'peso': peso,
         'imc': imc,
