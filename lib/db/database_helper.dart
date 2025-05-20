@@ -4,24 +4,22 @@ import 'package:path/path.dart';
 class DatabaseHelper {
   static Database? _database;
 
-  // Criar o banco de dados
+  // Getter para o banco de dados
   Future<Database> get database async {
     if (_database != null) return _database!;
-
-    // Se o banco não existir, cria um novo
     _database = await _initDB();
     return _database!;
   }
 
-  // Inicialização do banco de dados
-  _initDB() async {
+  // Inicializar o banco
+  Future<Database> _initDB() async {
     String path = join(await getDatabasesPath(), 'saudebahia.db');
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
   // Criação das tabelas
-  _onCreate(Database db, int version) async {
-    // Tabela de administradores
+  Future<void> _onCreate(Database db, int version) async {
+    // Administradores
     await db.execute('''
       CREATE TABLE administradores(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +29,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Tabela de pesos
+    // Pesos
     await db.execute('''
       CREATE TABLE pesos(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,7 +38,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Tabela de refeições
+    // Refeições
     await db.execute('''
       CREATE TABLE refeicoes(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,7 +48,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Tabela de exercícios
+    // Exercícios
     await db.execute('''
       CREATE TABLE exercicios(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +57,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Tabela de objetivos
+    // Objetivos
     await db.execute('''
       CREATE TABLE objetivos(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,7 +65,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Tabela de notas
+    // Notas
     await db.execute('''
       CREATE TABLE notas(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,22 +73,22 @@ class DatabaseHelper {
         conteudo TEXT
       )
     ''');
-    await db.execute('''
-  CREATE TABLE IF NOT EXISTS imc (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    peso REAL,
-    altura REAL,
-    imc REAL,
-    resultado TEXT,
-    data TEXT
-  )
-''');
 
+    // Histórico de IMC
+    await db.execute('''
+      CREATE TABLE imcs(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        peso REAL,
+        altura REAL,
+        imc REAL,
+        data TEXT
+      )
+    ''');
   }
 
-  // Função para fechar o banco de dados
+  // Fechar o banco
   Future<void> close() async {
     final db = await database;
-    db.close();
+    await db.close();
   }
 }
