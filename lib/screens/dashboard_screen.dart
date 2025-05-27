@@ -51,12 +51,22 @@ class DashboardScreen extends StatelessWidget {
             ),
             _buildDashboardCard(
               context,
-              icon: Icons.history,
-              title: 'Histórico IMC',
+              icon: Icons.monitor_weight,
+              title: 'Registrar Peso',
               onTap: () {
-                Navigator.pushNamed(context, '/imc_historico');
+                Navigator.pushNamed(context, '/peso');
               },
             ),
+
+            _buildDashboardCard(
+              context,
+              icon: Icons.show_chart,
+              title: 'Gráfico de Peso',
+              onTap: () {
+                Navigator.pushNamed(context, '/grafico_peso');
+              },
+            ),
+
             _buildDashboardCard(
               context,
               icon: Icons.list_alt,
