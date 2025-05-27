@@ -38,9 +38,18 @@ class DashboardScreen extends StatelessWidget {
               icon: Icons.fitness_center,
               title: 'Atividades Físicas',
               onTap: () {
-                Navigator.pushNamed(context, '/atividades');
+                Navigator.pushNamed(context, '/exercicios');
               },
             ),
+            _buildDashboardCard(
+              context,
+              icon: Icons.list,
+              title: 'Ver Exercícios',
+              onTap: () {
+                Navigator.pushNamed(context, '/lista-exercicios');
+              },
+            ),
+
             _buildDashboardCard(
               context,
               icon: Icons.accessibility_new,
