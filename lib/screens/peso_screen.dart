@@ -11,17 +11,16 @@ class PesoScreen extends StatefulWidget {
 class _PesoScreenState extends State<PesoScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _pesoController = TextEditingController();
+  DateTime _dataSelecionada = DateTime.now();
 
   Future<void> _salvarPeso() async {
     if (_formKey.currentState!.validate()) {
       final peso = double.parse(_pesoController.text);
 
       final db = await DatabaseHelper().database;
-      await db.insert('imcs', {
+      await db.insert('pesos', {
         'peso': peso,
-        'altura': 0.0, // altura e imc zerados porque só queremos registrar o peso
-        'imc': 0.0,
-        'data': DateTime.now().toIso8601String(),
+        'data': _dataSelecionada.toIso8601String(),
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -29,6 +28,24 @@ class _PesoScreenState extends State<PesoScreen> {
       );
 
       _pesoController.clear();
+      setState(() {
+        _dataSelecionada = DateTime.now();
+      });
+    }
+  }
+
+  Future<void> _selecionarData() async {
+    final data = await showDatePicker(
+      context: context,
+      initialDate: _dataSelecionada,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (data != null) {
+      setState(() {
+        _dataSelecionada = data;
+      });
     }
   }
 
@@ -56,6 +73,22 @@ class _PesoScreenState extends State<PesoScreen> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Text('Data:'),
+                  const SizedBox(width: 10),
+                  TextButton(
+                    onPressed: _selecionarData,
+                    child: Text(
+                      '${_dataSelecionada.day.toString().padLeft(2, '0')}/'
+                      '${_dataSelecionada.month.toString().padLeft(2, '0')}/'
+                      '${_dataSelecionada.year}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
               ElevatedButton(
