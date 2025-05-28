@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../db/database_helper.dart';
+import '../services/ia_service.dart';  // ajuste o caminho se necessário
 
 class ImcScreen extends StatefulWidget {
   const ImcScreen({super.key});
@@ -13,8 +14,10 @@ class _ImcScreenState extends State<ImcScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _alturaController = TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
+
   double? _resultadoIMC;
   String? _classificacao;
+  String? _sugestaoRefeicao;
 
   Future<void> _calcularERegistrarIMC() async {
     if (_formKey.currentState!.validate()) {
@@ -36,6 +39,7 @@ class _ImcScreenState extends State<ImcScreen> {
       setState(() {
         _resultadoIMC = imc;
         _classificacao = classificacao;
+        _sugestaoRefeicao = null; // limpa sugestão antiga enquanto carrega a nova
       });
 
       final db = await DatabaseHelper().database;
@@ -45,6 +49,17 @@ class _ImcScreenState extends State<ImcScreen> {
         'imc': imc,
         'data': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       });
+
+      try {
+        final sugestoes = await IaService.obterSugestoesRefeicoes(imc);
+        setState(() {
+          _sugestaoRefeicao = sugestoes.join('\n');
+        });
+      } catch (e) {
+        setState(() {
+          _sugestaoRefeicao = 'Erro ao obter sugestões da IA.';
+        });
+      }
     }
   }
 
@@ -56,20 +71,19 @@ class _ImcScreenState extends State<ImcScreen> {
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: [
               TextFormField(
                 controller: _alturaController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Altura (em metros)'),
-                validator: (val) => val!.isEmpty ? 'Informe sua altura' : null,
+                validator: (val) => val == null || val.isEmpty ? 'Informe sua altura' : null,
               ),
               TextFormField(
                 controller: _pesoController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Peso (em kg)'),
-                validator: (val) => val!.isEmpty ? 'Informe seu peso' : null,
+                validator: (val) => val == null || val.isEmpty ? 'Informe seu peso' : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -82,7 +96,12 @@ class _ImcScreenState extends State<ImcScreen> {
                     style: const TextStyle(fontSize: 18)),
                 Text('Classificação: $_classificacao',
                     style: const TextStyle(fontSize: 18)),
-              ]
+              ],
+              if (_sugestaoRefeicao != null) ...[
+                const SizedBox(height: 20),
+                const Text('Sugestões de Refeição:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(_sugestaoRefeicao!),
+              ],
             ],
           ),
         ),
