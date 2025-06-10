@@ -15,6 +15,22 @@ class _ExerciciosScreenState extends State<ExerciciosScreen> {
   final TextEditingController _tempoController = TextEditingController();
 
   String _intensidadeSelecionada = 'Leve';
+  DateTime _dataSelecionada = DateTime.now();
+
+  Future<void> _selecionarData(BuildContext context) async {
+    final DateTime? data = await showDatePicker(
+      context: context,
+      initialDate: _dataSelecionada,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (data != null) {
+      setState(() {
+        _dataSelecionada = data;
+      });
+    }
+  }
 
   Future<void> _salvarExercicio() async {
     if (_formKey.currentState!.validate()) {
@@ -24,7 +40,8 @@ class _ExerciciosScreenState extends State<ExerciciosScreen> {
         'nome': _nomeController.text,
         'descricao': _descricaoController.text,
         'intensidade': _intensidadeSelecionada,
-        'tempo': int.parse(_tempoController.text), // novo campo
+        'tempo': int.parse(_tempoController.text),
+        'data': _dataSelecionada.toIso8601String(), // salva data
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -36,8 +53,13 @@ class _ExerciciosScreenState extends State<ExerciciosScreen> {
       _tempoController.clear();
       setState(() {
         _intensidadeSelecionada = 'Leve';
+        _dataSelecionada = DateTime.now();
       });
     }
+  }
+
+  String _formatarData(DateTime data) {
+    return "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
   }
 
   @override
@@ -90,6 +112,21 @@ class _ExerciciosScreenState extends State<ExerciciosScreen> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Data: ${_formatarData(_dataSelecionada)}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _selecionarData(context),
+                    child: const Text('Selecionar Data'),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
               ElevatedButton(
