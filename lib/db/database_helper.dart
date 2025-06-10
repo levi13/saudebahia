@@ -53,7 +53,10 @@ class DatabaseHelper {
       CREATE TABLE exercicios(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT,
-        descricao TEXT
+        descricao TEXT,
+        tempo INTEGER,
+        data TEXT,
+        intensidade TEXT
       )
     ''');
 
